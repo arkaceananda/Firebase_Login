@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FirebaseLogin</string>
+    <string name="pagi">Good Morning</string>
+    <string name="siang">Good Afternoon</string>
+    <string name="sore">Good Evening</string>
+    <string name="malam">Good Night</string>
+    <string name="dashboard">Welcome to your dashboard</string>
+    <string name="password">Forgot Password?</string>
+    <string name="signin">Sign In</string>
+    <string name="google">Sign In with Google</string>
+</resources>
