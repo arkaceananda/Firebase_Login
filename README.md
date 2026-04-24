@@ -1,34 +1,6 @@
-# 🔥 Firebase Login App
-
-A simple Android authentication app built with **Kotlin + Jetpack Compose + Firebase Authentication**.
-
----
-
-## ✨ Features
-
-- Splash screen with Firebase logo
-- Email & Password login
-- Password visibility toggle (visible / hidden)
-- Google Sign-In authentication
-- Multi-language support (English 🇺🇸 & Indonesian 🇮🇩)
-- Simple dashboard with time-based greeting (using java.util.Calendar)
-- Logout functionality
-
----
-
-## 🛠 Tech Stack
-
-- Kotlin
-- Jetpack Compose
-- Firebase Authentication
-- Google Sign-In
-- Material 3
-
----
-
 ## 📱 Screenshots
 
-#### *Only show the EN language POV
+#### *Only show the EN language POV (Not in ID)
 
 | Splash Screen | Login Screen | Login Screen (Input) |
 |---------------------|---------------------|-------------------|
@@ -38,20 +10,11 @@ A simple Android authentication app built with **Kotlin + Jetpack Compose + Fire
 |---------------------|---------------------|-------------------|
 | <img width="260" src="https://github.com/user-attachments/assets/f0ec142d-0092-40ef-8897-a894304e3e95" /> | <img width="260" src="https://github.com/user-attachments/assets/feb2001c-df86-4490-994f-2a32a2c0aaab" /> | <img width="260" src="https://github.com/user-attachments/assets/c2c8b464-7a08-4263-85c6-3189a3280472" /> |
 
-
-
----
-
-## 🔐 Setup Firebase
-
-1. Create Firebase project
-2. Add Android app (use same package name)
-3. Download `google-services.json`
-4. Place it inside `/app` folder
-5. Sync Gradle
-
 ---
 ## Third-Party Services
 
 This project uses Firebase Authentication by Google.
 Firebase is a trademark of Google LLC.
+<p align="center">
+  <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" width="200" alt="Google Logo">
+</p>
