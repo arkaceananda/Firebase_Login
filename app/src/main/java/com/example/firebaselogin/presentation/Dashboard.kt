@@ -22,7 +22,7 @@ import java.util.Calendar
 fun Dashboard(onLogout: () -> Unit) {
     val auth = FirebaseAuth.getInstance()
     val user = auth.currentUser
-    val displayName = user?.displayName ?: user?.email ?: "User"
+    val displayName = user?.displayName ?: user?.email ?: stringResource(R.string.user_placeholder)
 
     val calendar = Calendar.getInstance()
     val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -76,9 +76,19 @@ fun Dashboard(onLogout: () -> Unit) {
             colors = ButtonDefaults.buttonColors(containerColor = RedAccent),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Icon(painter = painterResource(R.drawable.exit_logout_2857), contentDescription = null, tint = Color.Black, modifier = Modifier.size(24.dp))
+            Icon(
+                painter = painterResource(R.drawable.exit_logout_2857), 
+                contentDescription = null, 
+                tint = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
             Spacer(modifier = Modifier.width(12.dp))
-            Text("Sign Out", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            Text(
+                text = stringResource(R.string.signout), 
+                fontSize = 16.sp, 
+                fontWeight = FontWeight.Bold, 
+                color = Color.White
+            )
         }
     }
 }

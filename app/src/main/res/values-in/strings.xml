@@ -1,11 +1,19 @@
 <resources>
     <string name="app_name">FirebaseLogin</string>
+    <string name="greeting">Mari Masuk.</string>
+    <string name="welcome">Selamat Datang Kembali</string>
     <string name="pagi">Selamat Pagi</string>
+    <string name="password">Kata sandi</string>
+    <string name="validationepw">Mohon masukkan email dan kata sandi anda</string>
+    <string name="fpw">Masukkan email terlebih dahulu</string>
+    <string name="rpw">Setel Ulang Email Terkirim</string>
     <string name="siang">Selamat Siang</string>
     <string name="sore">Selamat Sore</string>
     <string name="malam">Selamat Malam</string>
     <string name="dashboard">Selamat datang di dashboard anda</string>
-    <string name="password">Lupa Kata sandi?</string>
+    <string name="fpassword">Lupa Kata sandi?</string>
     <string name="signin">Masuk</string>
     <string name="google">Masuk Dengan Google</string>
+    <string name="signout">Keluar</string>
+    <string name="slogout">Berhasil Keluar</string>
 </resources>

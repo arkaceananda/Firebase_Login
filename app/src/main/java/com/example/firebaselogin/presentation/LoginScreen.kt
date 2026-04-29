@@ -1,11 +1,9 @@
 package com.example.firebaselogin.presentation
 
-import android.content.Context
-import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,15 +27,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.credentials.CredentialManager
-import androidx.credentials.CustomCredential
-import androidx.credentials.GetCredentialRequest
 import com.example.firebaselogin.R
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.example.firebaselogin.repository.getGoogleCredential
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
 import com.example.firebaselogin.ui.theme.*
+import com.example.firebaselogin.utils.ExceptionHelper
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -73,7 +67,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             Spacer(modifier = Modifier.height(48.dp))
             Image(
                 painter = painterResource(id = R.drawable.primary_vertical_lockup_full_color),
-                contentDescription = "Firebase Logo",
+                contentDescription = stringResource(R.string.firebase_logo_desc),
                 modifier = Modifier.size(140.dp),
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -89,7 +83,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Let's Sign In.",
+                        text = stringResource(R.string.greeting),
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 28.sp,
                         color = PrimaryText,
@@ -99,7 +93,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = { Text("Email") },
+                        label = { Text(text = stringResource(R.string.email)) },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.Email,
@@ -128,7 +122,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Password") },
+                        label = { Text(text = stringResource(R.string.password)) },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.Lock,
@@ -149,7 +143,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                             ) {
                                 Icon(
                                     painter = iconImage,
-                                    contentDescription = "Toggle Password",
+                                    contentDescription = stringResource(R.string.toggle_password_desc),
                                     modifier = Modifier.size(24.dp),
                                     tint = if (isLoading) SecondaryText else passwordColor
                                 )
@@ -179,19 +173,19 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                                 if (email.isNotEmpty()) {
                                     FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                                         .addOnSuccessListener {
-                                            Toast.makeText(context, "Reset email sent", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.rpw), Toast.LENGTH_SHORT).show()
                                         }
                                         .addOnFailureListener {
-                                            Toast.makeText(context, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(R.string.error_prefix) + it.message, Toast.LENGTH_SHORT).show()
                                         }
                                 } else {
-                                    Toast.makeText(context, "Enter your email first.", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.fpw), Toast.LENGTH_SHORT).show()
                                 }
                             },
                             enabled = !isLoading
                         ) {
                             Text(
-                                text = stringResource(R.string.password),
+                                text = stringResource(R.string.fpassword),
                                 color = if (isLoading) SecondaryText else OrangeFB,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.SemiBold
@@ -212,10 +206,10 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                                     }
                                     .addOnFailureListener {
                                         isLoading = false
-                                        Toast.makeText(context, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, context.getString(R.string.error_prefix) + it.message, Toast.LENGTH_SHORT).show()
                                     }
                             } else {
-                                Toast.makeText(context, "Please enter email and password", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.validationepw), Toast.LENGTH_SHORT).show()
                             }
                         },
                         modifier = Modifier.fillMaxWidth().height(54.dp),
@@ -239,75 +233,46 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                         onClick = {
                             scope.launch {
                                 isLoading = true
-                                val firebaseCredential = getGoogleCredential(context)
-                                if (firebaseCredential != null) {
-                                    try {
-                                        FirebaseAuth.getInstance().signInWithCredential(firebaseCredential).await()
+                                val result = getGoogleCredential(context)
+                                result.onSuccess { firebaseCredential ->
+                                    if (firebaseCredential != null) {
+                                        try {
+                                            FirebaseAuth.getInstance().signInWithCredential(firebaseCredential).await()
+                                            isLoading = false
+                                            onLoginSuccess()
+                                        } catch (e: Exception) {
+                                            isLoading = false
+                                            Toast.makeText(context, context.getString(R.string.error_prefix) + e.message, Toast.LENGTH_SHORT).show()
+                                        }
+                                    } else {
                                         isLoading = false
-                                        onLoginSuccess()
-                                    } catch (e: Exception) {
-                                        isLoading = false
-                                        Toast.makeText(context, "Auth Failed: ${e.message}", Toast.LENGTH_SHORT).show()
                                     }
-                                } else {
+                                }.onFailure { error ->
                                     isLoading = false
+                                    val message = when(error) {
+                                        is ExceptionHelper.NetworkError -> context.getString(R.string.validationepw) // Anda bisa sesuaikan stringnya
+                                        else -> context.getString(R.string.error_prefix) + error.message
+                                    }
+                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 }
                             }
                         },
                         modifier = Modifier.fillMaxWidth().height(54.dp),
                         shape = RoundedCornerShape(16.dp),
-                        enabled = !isLoading,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, AmberFB),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = PrimaryText)
+                        border = BorderStroke(
+                            width = 1.dp,
+                            brush = Brush.horizontalGradient(listOf(OrangeFB, Color.Yellow))
+                        ),
+                        enabled = !isLoading
                     ) {
-                        if (isLoading) {
-                            CircularProgressIndicator(color = OrangeFB, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
-                        } else {
-                            Icon(
-                                painterResource(id = R.drawable.logo_google_icon_png),
-                                contentDescription = "Google Logo",
-                                modifier = Modifier.size(20.dp),
-                                tint = Color.Unspecified
-                            )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(painter = painterResource(R.drawable.logo_google_icon_png), contentDescription = null, modifier = Modifier.size(20.dp))
                             Spacer(modifier = Modifier.width(12.dp))
-                            Text(stringResource(R.string.google), fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.google), fontSize = 14.sp, fontWeight = FontWeight.Bold, color = PrimaryText)
                         }
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(48.dp))
-        }
-
-        if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Transparent)
-                    .clickable(enabled = false) {}
-            )
         }
     }
-}
-
-private suspend fun getGoogleCredential(context: Context): com.google.firebase.auth.AuthCredential? {
-    try {
-        val credentialManager = CredentialManager.create(context)
-        val googleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(false)
-            .setServerClientId("65917856408-qckfoibadlqevai0s7rhaso4forjouap.apps.googleusercontent.com")
-            .setAutoSelectEnabled(true)
-            .build()
-        val request = GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
-        val result = credentialManager.getCredential(context, request)
-        val credential = result.credential
-        if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-            return GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
-        }
-    } catch (e: Exception) {
-        Log.e("Auth", "Error: ${e.message}")
-    }
-    return null
 }

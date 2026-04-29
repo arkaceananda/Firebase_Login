@@ -1,11 +1,24 @@
 <resources>
     <string name="app_name">FirebaseLogin</string>
+    <string name="greeting">Let\'s Sign In.</string>
+    <string name="welcome">Welcome Back</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
     <string name="pagi">Good Morning</string>
     <string name="siang">Good Afternoon</string>
+    <string name="validationepw">Please enter email and password</string>
+    <string name="fpw">Enter Email First</string>
+    <string name="rpw">Reset Password Email Sent</string>
     <string name="sore">Good Evening</string>
     <string name="malam">Good Night</string>
     <string name="dashboard">Welcome to your dashboard</string>
-    <string name="password">Forgot Password?</string>
+    <string name="fpassword">Forgot Password?</string>
     <string name="signin">Sign In</string>
     <string name="google">Sign In with Google</string>
+    <string name="signout">Sign Out</string>
+    <string name="slogout">Successfully logged out</string>
+    <string name="user_placeholder">User</string>
+    <string name="error_prefix">Error: </string>
+    <string name="firebase_logo_desc">Firebase Logo</string>
+    <string name="toggle_password_desc">Toggle Password</string>
 </resources>
